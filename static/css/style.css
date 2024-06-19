@@ -56,7 +56,7 @@ a:focus {
 }
 
 .btn.btn-info {
-    background-color: #52b0c3;
+    background-color: #68bfd1;
     box-sizing: border-box;
     border: 2px solid white;
     outline: none;
@@ -67,8 +67,8 @@ a:focus {
 .btn.btn-info:hover {
     background-color: white;
     box-sizing: border-box;
-    border: 2px solid #52b0c3;
-    color: #52b0c3;
+    border: 2px solid #68bfd1;
+    color: #68bfd1;
     outline: none;
     box-shadow: none;
 }
@@ -77,8 +77,8 @@ a:focus {
 .btn.btn-info:active:focus {
     background-color: white !important;
     box-sizing: border-box;
-    border: 2px solid #52b0c3 !important;
-    color: #52b0c3 !important;
+    border: 2px solid #68bfd1 !important;
+    color: #68bfd1 !important;
     outline: none;
     box-shadow: none !important;
 }
@@ -125,7 +125,7 @@ a:focus {
 }
 
 .nav.nav-tabs {
-    background-color: #52b0c3;
+    background-color: #68bfd1;
     width: 100%;
     color: white;
     height: 45px;
@@ -158,7 +158,7 @@ a:focus {
 
 #loadSystem {
     border: 2px solid white;
-    background-color: #52b0c3;
+    background-color: #68bfd1;
     color: white;
 }
 
@@ -170,13 +170,13 @@ a:focus {
 
 #violationsButton {
     border: 2px solid white;
-    background-color: #52b0c3;
+    background-color: #68bfd1;
     color: white;
 }
 
 #loadSystem:hover {
-    border: 2px solid #52b0c3;
-    color: #52b0c3;
+    border: 2px solid #68bfd1;
+    color: #68bfd1;
     background-color: white;
 }
 
@@ -330,7 +330,7 @@ a.dropdown-item {
 
 .form-check-input[type=checkbox] {
     border-radius: 0.25em;
-    border: 1px solid #52b0c3;
+    border: 1px solid #68bfd1;
     box-shadow: 6px 8px 9px -6px #000000;
 }
 
@@ -638,9 +638,10 @@ span {
 
 #tracesNum{
     padding: 1%;
+    margin-bottom:50px;
 }
 #resetButton {
-    background-color: #52b0c3;
+    background-color: #68bfd1;
     border-radius: 20px;
     width: 129px;
     height: 33px;
@@ -666,11 +667,21 @@ span {
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+table.dataTable thead th,
+table.dataTable tfoot th {
+    font-weight: 500;
+}
+
 thead {
     height: 50px;
-    background-color: #aeaccb;
+    background-color: #68bfd1;
     position: sticky;
     top: 0;
+}
+
+th{
+    color: white;
+    font-weight: 500;
 }
 
 tr {
@@ -717,8 +728,8 @@ tbody tr:hover {
     transition: all 0.2s ease-in-out;
 }
 .expandButtonPressed{
-    background-color: #52b0c3;
-    border: 1px solid #52b0c3;
+    background-color: #68bfd1;
+    border: 1px solid #68bfd1;
 }
 .expandButton img {
     width: 25px;
@@ -784,7 +795,7 @@ table.dataTable tbody td {
     top: 69px; */
     border: none;
     border-radius: 6px;
-    background-color: #52b0c3;
+    background-color: #68bfd1;
     font-size: 17px;
     font-weight: 500;
     color: white;
@@ -815,7 +826,7 @@ table.dataTable tbody td {
 #replayTraceBtn{
     border: none;
     border-radius: 13px;
-    background-color: #52b0c3;
+    background-color: #68bfd1;
     font-size: 17px;
     font-weight: 500;
     color: white;
@@ -880,7 +891,7 @@ table.dataTable tbody td {
 .newPageBtn{
     display: none;
     border-radius: 4px;
-    border: 1px solid #52b0c3;
+    border: 1px solid #68bfd1;
     height: 35px;
     width: 35px;
     background: transparent;
@@ -936,7 +947,7 @@ table.dataTable tbody td {
     padding-top: 4%;
 }
 .idealPathBtn{
-    background-color: #52b0c3;
+    background-color: #68bfd1;
     color: white;
     height: 42px;
     width: 160px;
@@ -944,7 +955,7 @@ table.dataTable tbody td {
     margin-top: 10px;
 }
 .idealPathBtn:hover{
-    border: 2px solid #52b0c3;
+    border: 2px solid #68bfd1;
 }
 .pathChoiceDiv{
     display: flex;

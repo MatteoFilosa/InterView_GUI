@@ -9,17 +9,9 @@ var selectedTraceID;
 var selectedTrace_RawValue;
 var maxInteractionsValue, maxTotalTimeValue, maxViolationsValue;
 var globalViolationsData = [];
-var filtersContainer;
 var demographicData;
 var interactionCounts = {};
-var eventTypesFilter = [
-  "click",
-  "brush",
-  "mousemove",
-  "wheel",
-  "dblclick",
-  "mouseout",
-];
+
 //#endregion
 
 //Gloabl Variables - Francesco
@@ -27,7 +19,7 @@ let selectedCheckboxTrace;
 //End Global Variables - Francesco
 
 window.onload = function () {
-  filtersContainer = document.getElementById("filtersContainer");
+  
   loadingIcon = document.getElementById("loadingIcon");
   table = document.getElementById("table");
 
@@ -82,11 +74,7 @@ function createCheckboxes() {
     });
   }
 
-  var violationFilterDiv = document.createElement("div");
-  // // Creazione del label "Violation types"
-  // var labelViolationTypes = document.createElement("label");
-  // labelViolationTypes.textContent = "Violation types";
-  // violationFilterDiv.appendChild(labelViolationTypes);
+
 
   var checkboxLabels = ["Low", "Medium", "High", "Critical"];
 
@@ -112,164 +100,18 @@ function createCheckboxes() {
     containerDiv.appendChild(checkbox);
     containerDiv.appendChild(label);
 
-    document.getElementById("violationsDropdown").appendChild(containerDiv);
-    checkbox.addEventListener("change", applyCheckboxFilter);
-  }
-  // violationFilterDiv.appendChild(horizontalDiv);
-  filtersContainer.appendChild(violationFilterDiv);
-}
-
-function applyCheckboxFilter() {
-  // Get values selected from checkboxes
-  const checkbox1Checked = document.getElementById("checkbox1").checked;
-  const checkbox2Checked = document.getElementById("checkbox2").checked;
-  const checkbox3Checked = document.getElementById("checkbox3").checked;
-  const checkbox4Checked = document.getElementById("checkbox4").checked;
-
-  // Get values from sliders
-  const violationsFilterValue = parseFloat(
-    document.getElementById("violationsSlider").value
-  );
-  const eventsFilterValue = parseFloat(
-    document.getElementById("interactionsSlider").value
-  );
-  const totalTimeFilterValue = parseFloat(
-    document.getElementById("totalTimeSlider").value
-  );
-
-  // Get values selected from demographic filters
-  const selectedAge = document.getElementById("AgeFilter").value;
-  const selectedGender = document.getElementById("GenderFilter").value;
-  const selectedStudyTitle = document.getElementById("StudyTitleFilter").value;
-
-  // Define selectedLevels array
-  const selectedLevels = [];
-
-  // Add selected levels to the array
-  if (checkbox1Checked) selectedLevels.push("level1");
-  if (checkbox2Checked) selectedLevels.push("level2");
-  if (checkbox3Checked) selectedLevels.push("level3");
-  if (checkbox4Checked) selectedLevels.push("level4");
-
-  // Loop through table rows
-  const tableRows = document
-    .getElementById("tracesTable")
-    .getElementsByTagName("tr");
-  let visibleRowCount = 0;
-
-  for (let i = 0; i < tableRows.length; i++) {
-    const row = tableRows[i];
-
-    // Get values from children using specified ids
-    const violationsValue = parseFloat(
-      row.querySelector("#violationsCell").innerHTML
-    );
-    const eventsValue = parseFloat(row.querySelector("#eventCell").innerHTML);
-    var totalTimeValue = parseFloat(row.querySelector("#timeCell").innerHTML);
-
-    // Get ID from the row
-    const userIDElement = row.querySelector(".sorting_1");
-    const rowID = userIDElement ? userIDElement.innerHTML : null;
-
-    // Cerca le informazioni demografiche per l'utente corrente
-    const userDemographicInfo = demographicData.find(
-      (item) => item.User === rowID
-    );
-
-    // Check if the ID has at least one violation for each selected level
-    const showRow =
-      hasViolationsLevel(rowID, selectedLevels) &&
-      (!selectedAge || userDemographicInfo.Age === selectedAge) &&
-      (!selectedGender || userDemographicInfo.Gender === selectedGender) &&
-      (!selectedStudyTitle ||
-        userDemographicInfo["Study Title"] === selectedStudyTitle) &&
-      !isNaN(violationsValue) &&
-      !isNaN(eventsValue) &&
-      !isNaN(totalTimeValue) &&
-      violationsValue <= violationsFilterValue &&
-      eventsValue <= eventsFilterValue &&
-      totalTimeValue <= totalTimeFilterValue;
-
-    // Show/hide row based on checkbox and slider filters
-    row.style.display = showRow ? "" : "none";
-
-    // Increment count of visible rows
-    if (showRow) {
-      visibleRowCount++;
-    }
+    //document.getElementById("violationsDropdown").appendChild(containerDiv);
+  
   }
 
-  // Update innerHTML of "tracesNum" element
-  document.getElementById(
-    "tracesNum"
-  ).innerHTML = `Loaded User Traces: ${visibleRowCount} out of ${tracesNum}`;
+  
 }
 
-// Function to check if an ID has at least one violation for each specified level
-function hasViolationsLevel(userID, levels) {
-  // Search for the user in globalViolationsData
-  const userData = globalViolationsData.find((data) => data.user === userID);
 
-  // If the user is not found, return false
-  if (!userData) {
-    return false;
-  }
 
-  // Check if the user has at least one violation for each specified level
-  return levels.every((level) => userData.violations[level] > 0);
-}
 
-function createSliders() {
-  // maxViolationsValue
-  const violationsSlider = createSlider(
-    "violationsSlider",
-    "Total Violations",
-    maxViolationsValue
-  );
 
-  // maxInteractionsValue
-  const interactionsSlider = createSlider(
-    "interactionsSlider",
-    "Events",
-    maxInteractionsValue
-  );
 
-  // maxTotalTimeValue
-  const totalTimeSlider = createSlider(
-    "totalTimeSlider",
-    "Time",
-    maxTotalTimeValue
-  );
-
-  const eventTypesArray = [
-    "click",
-    "brush",
-    "mousemove",
-    "wheel",
-    "dblclick",
-    "mouseout",
-  ];
-
-  eventTypesArray.forEach((interactionType) => {
-    const maxInteractionValue = getMaxValueForInteractionType(interactionType);
-    const slider = createSlider(
-      interactionType + "Slider",
-      interactionType,
-      maxInteractionValue
-    );
-    //console.log(interactionType + "Filter");
-    document.getElementById(interactionType + "Filter").appendChild(slider);
-  });
-
-  // Add sliders
-  document.getElementById("violationsFilter").appendChild(violationsSlider);
-  document.getElementById("eventsFilter").appendChild(interactionsSlider);
-  document.getElementById("totalTimeFilter").appendChild(totalTimeSlider);
-
-  // Add the other two checkboxes (violation types, task division), can be done later
-
-  // We need to add a function for filtering the table
-}
 
 function getMaxValueForInteractionType(interactionType) {
   let maxValue = 0;
@@ -333,7 +175,7 @@ function createSlider(id, label, maxValue) {
   sliderContainer.appendChild(slider);
   sliderContainer.appendChild(valuesDiv);
 
-  //sliderContainer.setAttribute("data-filter", dataFilter);
+
 
   // Create element to display current value
   const valueDisplay = document.createElement("span");
@@ -348,119 +190,13 @@ function createSlider(id, label, maxValue) {
   // Attach an event listener to update the displayed value when the slider changes
   slider.addEventListener("input", () => {
     valueDisplay.textContent = slider.value;
-    applyTableFilter();
+   
   });
 
   return sliderContainer;
 }
 
-function applyTableFilter() {
-  // Get values from sliders
-  const violationsFilterValue =
-    document.getElementById("violationsSlider").value;
-  const eventsFilterValue = document.getElementById("interactionsSlider").value;
-  const totalTimeFilterValue = parseFloat(
-    document.getElementById("totalTimeSlider").value
-  );
 
-  // Get values selected from checkboxes
-  const checkbox1Checked = document.getElementById("checkbox1").checked;
-  const checkbox2Checked = document.getElementById("checkbox2").checked;
-  const checkbox3Checked = document.getElementById("checkbox3").checked;
-  const checkbox4Checked = document.getElementById("checkbox4").checked;
-
-  // Get values selected from demographic filters
-  const selectedAge = document.getElementById("AgeFilter").value;
-  const selectedGender = document.getElementById("GenderFilter").value;
-  const selectedStudyTitle = document.getElementById("StudyTitleFilter").value;
-
-  // Check if at least one checkbox is selected
-  const anyCheckboxChecked =
-    checkbox1Checked ||
-    checkbox2Checked ||
-    checkbox3Checked ||
-    checkbox4Checked;
-
-  // Loop through table rows
-  const tableRows = document
-    .getElementById("tracesTable")
-    .getElementsByTagName("tr");
-  let visibleRowCount = 0;
-
-  for (let i = 0; i < tableRows.length; i++) {
-    const row = tableRows[i];
-
-    // Get values from children using specified ids
-    const violationsValue = parseFloat(
-      row.querySelector("#violationsCell").innerHTML
-    );
-    const eventsValue = parseFloat(row.querySelector("#eventCell").innerHTML);
-    const totalTimeValue = parseFloat(row.querySelector("#timeCell").innerHTML);
-
-    // Get ID from the row
-    const userIDElement = row.querySelector(".sorting_1");
-    const rowID = userIDElement ? userIDElement.innerHTML : null;
-
-    // Cerca le informazioni demografiche per l'utente corrente
-    const userDemographicInfo = demographicData.find(
-      (item) => item.User === rowID
-    );
-
-    // Check if at least one checkbox is selected or if all are unticked
-    const checkboxFilterCondition =
-      !anyCheckboxChecked ||
-      (checkbox1Checked && hasViolationsLevel(rowID, ["level1"])) ||
-      (checkbox2Checked && hasViolationsLevel(rowID, ["level2"])) ||
-      (checkbox3Checked && hasViolationsLevel(rowID, ["level3"])) ||
-      (checkbox4Checked && hasViolationsLevel(rowID, ["level4"]));
-
-    const interactionTypeFilterCondition = eventTypesFilter.every(
-      (interactionType) => {
-        const sliderValue = parseFloat(
-          document.getElementById(interactionType + "Slider").value
-        );
-        const interactionCountInfo = getInteractionCountInfo(
-          rowID,
-          interactionType
-        );
-
-        // Check if the interaction value satisfies the filter
-        //console.log(interactionType, interactionCountInfo, sliderValue, interactionCountInfo && interactionCountInfo.count <= sliderValue);
-        return (
-          interactionCountInfo && interactionCountInfo.count <= sliderValue
-        );
-      }
-    );
-
-    // Show/hide row based on the filter
-    const showRow =
-      !isNaN(violationsValue) &&
-      !isNaN(eventsValue) &&
-      !isNaN(totalTimeValue) &&
-      violationsValue <= violationsFilterValue &&
-      eventsValue <= eventsFilterValue &&
-      totalTimeValue <= totalTimeFilterValue &&
-      checkboxFilterCondition &&
-      interactionTypeFilterCondition &&
-      (!selectedAge || userDemographicInfo.Age === selectedAge) &&
-      (!selectedGender || userDemographicInfo.Gender === selectedGender) &&
-      (!selectedStudyTitle ||
-        userDemographicInfo["Study Title"] === selectedStudyTitle);
-
-    // Show/hide row based on the filter
-    row.style.display = showRow ? "" : "none";
-
-    // Increment count of visible rows
-    if (showRow) {
-      visibleRowCount++;
-    }
-  }
-
-  // Update innerHTML of "tracesNum" element
-  document.getElementById(
-    "tracesNum"
-  ).innerHTML = `Loaded User Traces: ${visibleRowCount} out of ${tracesNum}`;
-}
 
 function getInteractionCountInfo(rowID, interactionType) {
   //console.log(interactionCounts, interactionType, interactionCounts[interactionType])
@@ -471,224 +207,14 @@ function getInteractionCountInfo(rowID, interactionType) {
   return interactionCountInfo;
 }
 
-function createDemographicFilter(data) {
-  demographicData = data;
-
-  // Get unique values for age, gender, and study title
-  const uniqueAges = [...new Set(demographicData.map((item) => item.Age))].sort(
-    (a, b) => ageSortOrder.indexOf(a) - ageSortOrder.indexOf(b)
-  );
-  const uniqueGenders = [
-    ...new Set(demographicData.map((item) => item.Gender)),
-  ].sort((a, b) => genderSortOrder.indexOf(a) - genderSortOrder.indexOf(b));
-
-  // Define the order for study titles directly
-  const uniqueStudyTitles = [
-    "High School",
-    "Bachelor Degree",
-    "Master Degree",
-    "PhD",
-  ];
-
-  // Create filter for age
-  const ageFilter = createSelectFilter(
-    "AgeFilter",
-    "Age",
-    uniqueAges,
-    "Select Age"
-  );
-  document.getElementById("demographicFilter").appendChild(ageFilter);
-
-  // Create filter for gender with placeholder "Select Gender"
-  const genderFilter = createSelectFilter(
-    "GenderFilter",
-    "Gender",
-    uniqueGenders,
-    "Select Gender"
-  );
-  document.getElementById("demographicFilter").appendChild(genderFilter);
-
-  // Create filter for study title with placeholder "Select Study Title"
-  const studyTitleFilter = createSelectFilter(
-    "StudyTitleFilter",
-    "Study Title",
-    uniqueStudyTitles,
-    "Select Study Title"
-  );
-  document.getElementById("demographicFilter").appendChild(studyTitleFilter);
-
-  // Add listener to filter elements to apply the filter function
-  ageFilter.addEventListener("change", applyDemographicFilter);
-  genderFilter.addEventListener("change", applyDemographicFilter);
-  studyTitleFilter.addEventListener("change", applyDemographicFilter);
-}
 
 // No need for studyTitleSortOrder in this case
 const ageSortOrder = ["18-24", "25-34", "35-44", "45-54"];
 const genderSortOrder = ["Male", "Female", "Other", "Prefer not to say"];
 
-function createSelectFilter(id, label, options, placeholder = "Select") {
-  const selectContainer = document.createElement("div");
 
-  // labels
-  const labelElement = document.createElement("label");
-  labelElement.textContent = label;
-  selectContainer.appendChild(labelElement);
 
-  const select = document.createElement("select");
-  select.id = id;
-  select.classList.add("form-select");
 
-  // Add a placeholder option
-  const placeholderOption = document.createElement("option");
-  placeholderOption.value = "";
-  placeholderOption.text = placeholder;
-  placeholderOption.disabled = true;
-  placeholderOption.selected = true;
-  select.appendChild(placeholderOption);
-
-  options.forEach((optionValue) => {
-    const option = document.createElement("option");
-    option.value = optionValue;
-    option.text = optionValue;
-    select.appendChild(option);
-  });
-
-  selectContainer.appendChild(select);
-
-  return selectContainer;
-}
-
-function applyDemographicFilter() {
-  const selectedAge = document.getElementById("AgeFilter").value;
-  const selectedGender = document.getElementById("GenderFilter").value;
-  const selectedStudyTitle = document.getElementById("StudyTitleFilter").value;
-
-  // Get values from sliders
-  const violationsFilterValue = parseFloat(
-    document.getElementById("violationsSlider").value
-  );
-  const eventsFilterValue = parseFloat(
-    document.getElementById("interactionsSlider").value
-  );
-  const totalTimeFilterValue = parseFloat(
-    document.getElementById("totalTimeSlider").value
-  );
-
-  // Get values selected from checkboxes
-  const checkbox1Checked = document.getElementById("checkbox1").checked;
-  const checkbox2Checked = document.getElementById("checkbox2").checked;
-  const checkbox3Checked = document.getElementById("checkbox3").checked;
-  const checkbox4Checked = document.getElementById("checkbox4").checked;
-
-  // Check if at least one checkbox is selected
-  const anyCheckboxChecked =
-    checkbox1Checked ||
-    checkbox2Checked ||
-    checkbox3Checked ||
-    checkbox4Checked;
-
-  // Loop attraverso le righe della tabella
-  const tableRows = document
-    .getElementById("tracesTable")
-    .getElementsByTagName("tr");
-  let visibleRowCount = 0;
-
-  for (let i = 0; i < tableRows.length; i++) {
-    const row = tableRows[i];
-
-    const userIDElement = row.querySelector(".sorting_1");
-    const rowID = userIDElement ? userIDElement.innerHTML : null;
-
-    const userDemographicInfo = demographicData.find(
-      (item) => item.User === rowID
-    );
-
-    const violationsValue = parseFloat(
-      row.querySelector("#violationsCell").innerHTML
-    );
-    const eventsValue = parseFloat(row.querySelector("#eventCell").innerHTML);
-    var totalTimeValue = parseFloat(row.querySelector("#timeCell").innerHTML);
-
-    // All the filters considered
-    const showRow =
-      (!selectedAge || userDemographicInfo.Age === selectedAge) &&
-      (!selectedGender || userDemographicInfo.Gender === selectedGender) &&
-      (!selectedStudyTitle ||
-        userDemographicInfo["Study Title"] === selectedStudyTitle) &&
-      !isNaN(violationsValue) &&
-      violationsValue <= violationsFilterValue &&
-      !isNaN(eventsValue) &&
-      eventsValue <= eventsFilterValue &&
-      !isNaN(totalTimeValue) &&
-      totalTimeValue <= totalTimeFilterValue &&
-      (!anyCheckboxChecked ||
-        (checkbox1Checked && hasViolationsLevel(rowID, ["level1"])) ||
-        (checkbox2Checked && hasViolationsLevel(rowID, ["level2"])) ||
-        (checkbox3Checked && hasViolationsLevel(rowID, ["level3"])) ||
-        (checkbox4Checked && hasViolationsLevel(rowID, ["level4"])));
-
-    // Hide/show row
-    row.style.display = showRow ? "" : "none";
-
-    if (showRow) {
-      visibleRowCount++;
-    }
-  }
-
-  // "tracesNum"
-  document.getElementById(
-    "tracesNum"
-  ).innerHTML = `Loaded User Traces: ${visibleRowCount} out of ${tracesNum}`;
-}
-
-function resetFilters() {
-  // Reset sliders to their maximum values
-  document.getElementById("violationsSlider").value = maxViolationsValue;
-  document.getElementById("interactionsSlider").value = maxInteractionsValue;
-  document.getElementById("totalTimeSlider").value = maxTotalTimeValue;
-
-  eventTypesFilter.forEach((interactionType) => {
-    const sliderId = interactionType + "Slider";
-    const maxInteractionValue = getMaxValueForInteractionType(interactionType);
-
-    // Set the slider value
-    document.getElementById(sliderId).value = maxInteractionValue;
-
-    // Update the corresponding display element
-    const displayElement = document.getElementById(sliderId).nextSibling; // Assuming it's the next sibling element
-    if (displayElement) {
-      displayElement.textContent = maxInteractionValue;
-    }
-  });
-
-  // Uncheck all checkboxes
-  document.getElementById("checkbox1").checked = false;
-  document.getElementById("checkbox2").checked = false;
-  document.getElementById("checkbox3").checked = false;
-  document.getElementById("checkbox4").checked = false;
-
-  // Reset demographic filters to their default values
-  document.getElementById("AgeFilter").value = "";
-  document.getElementById("GenderFilter").value = "";
-  document.getElementById("StudyTitleFilter").value = "";
-
-  // Apply the reset to update the table
-  applyTableFilter();
-
-  const checkboxes = document.querySelectorAll(
-    "#tracesTable input[type='checkbox']"
-  );
-  checkboxes.forEach((checkbox) => {
-    checkbox.checked = false;
-    const row = checkbox.closest("tr");
-      row.classList.remove("table-selected");
-      selectedTraces.delete(checkbox.id);
-    
-  });
-  console.log(selectedTraces);
-  clearExtraInformation();
-}
 
 function getUserTraces() {
   const url = "http://127.0.0.1:5000/get_user_traces";
@@ -698,7 +224,6 @@ function getUserTraces() {
       loadedTraces = json;
       tracesNum = json.length;
       loadingIcon.style.display = "none";
-      filtersContainer.style.display = "flex";
       table.style.display = "block";
       document.getElementById("tracesNum").innerHTML =
         "Loaded User Traces: " + tracesNum;
@@ -718,15 +243,9 @@ function getUserTraces() {
         fixedHeader: true,
       });
 
-      //Filters creation
-      createSliders();
+      
       createCheckboxes();
-      // Local JSON file
-      fetch("/files/user_traces/demographic_info/demographic_info.json")
-        .then((response) => response.json())
-        .then((data) => {
-          createDemographicFilter(data);
-        });
+      
     });
 }
 
