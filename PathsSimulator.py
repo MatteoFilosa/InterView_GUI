@@ -1062,48 +1062,55 @@ replayState = "play"
 
 
 def changeStateChartColors(transition, replayJson, driver):
+
+    #print("------------CHANGE STATECHART COLOR--------------")
     
     global currentState
     global currentEdge
 
     # We will add here the scripts to execute on the inputted driver.
+    # This part of the script uses a mechanism to color all the statechart's elements in light grey.
     totalScript = """
+    
+    
+
+    if(document.getElementById('svg_edge_id_E53').style.fill != 'rgb(163, 163, 163)'){
+    
  
-    // Seleziona tutti gli elementi con la classe 'node'
-const nodes = document.querySelectorAll('.node');
+        const nodes = document.querySelectorAll('.node');
 
-// Itera su ciascun elemento con la classe 'node'
-nodes.forEach(function(node) {
-    // Seleziona tutti gli elementi 'polygon' figli dell'elemento corrente
-    const polygons = node.querySelectorAll('polygon');
+        nodes.forEach(function(node) {
 
-    // Imposta il colore di riempimento per ciascun polygon
-    polygons.forEach(function(polygon) {
-        polygon.style.fill = '#a3a3a3';
-    });
-});
+        const polygons = node.querySelectorAll('polygon');
 
-// Seleziona tutti gli elementi con la classe 'edge'
-var edges = document.querySelectorAll('.edge');
+            polygons.forEach(function(polygon) {
+                polygon.style.fill = '#a3a3a3';
+            });
 
-// Imposta l'opacità per i figli 'polygon', 'polyline' e 'path' di ciascun elemento con la classe 'edge'
-edges.forEach(function(edge) {
-    // Seleziona i 'polygon' figli e imposta l'opacità
-    edge.querySelectorAll('polygon').forEach(function(polygon) {
-        polygon.style.opacity = 0.15;
-    });
+        });
 
-    // Seleziona i 'polyline' figli e imposta l'opacità
-    edge.querySelectorAll('polyline').forEach(function(polyline) {
-        polyline.style.opacity = 0.15;
-    });
 
-    // Seleziona i 'path' figli e imposta l'opacità
-    edge.querySelectorAll('path').forEach(function(path) {
-        path.style.opacity = 0.15;
-    });
-});
+        var edges = document.querySelectorAll('.edge');
 
+
+        edges.forEach(function(edge) {
+ 
+        edge.querySelectorAll('polygon').forEach(function(polygon) {
+            polygon.style.opacity = 0.15;
+        });
+
+
+        edge.querySelectorAll('polyline').forEach(function(polyline) {
+            polyline.style.opacity = 0.15;
+        });
+
+ 
+        edge.querySelectorAll('path').forEach(function(path) {
+            path.style.opacity = 0.15;
+        });
+
+        });
+    }
 
     """
 
