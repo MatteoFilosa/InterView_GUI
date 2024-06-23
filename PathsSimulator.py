@@ -1074,7 +1074,7 @@ def changeStateChartColors(transition, replayJson, driver):
     
     
 
-    if(document.getElementById('svg_edge_id_E53').style.fill != 'rgb(163, 163, 163)'){
+    if(document.getElementById('svg_edge_id_E79').style.fill != 'rgb(163, 163, 163)'){
     
  
         const nodes = document.querySelectorAll('.node');
